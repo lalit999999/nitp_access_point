@@ -1,0 +1,470 @@
+CSE Academic Resource Platform
+(Frontend – React + Tailwind + Fetch API)
+
+Build a modern, highly responsive frontend web application for CSE students to browse and access semester-wise academic resources such as PYQs, Notes, and Books.
+
+🛠 Tech Stack
+
+React (Vite preferred)
+
+Tailwind CSS
+
+React Router
+
+Context API (global state management)
+
+Fetch API (for backend communication)
+
+Environment variables for API base URL
+
+The frontend must consume data from a separate backend REST API using Fetch.
+
+🎨 UI & DESIGN REQUIREMENTS
+🌗 Dark / Light Mode
+
+Toggle switch in navbar
+
+Store preference in localStorage
+
+Use Tailwind dark: classes
+
+Smooth transition between themes
+
+Default to system theme on first visit
+
+Apply transition-colors duration-300
+
+🎯 Design Philosophy
+
+The interface must feel:
+
+Clean
+
+Academic
+
+Modern
+
+Minimal
+
+Easy to navigate
+
+Visually balanced
+
+Avoid clutter. Maintain consistent spacing and hierarchy.
+
+📐 Layout Structure
+🔹 Navbar (Top)
+
+Logo / Website name (left)
+
+Centered Search Bar
+
+Dark/Light toggle
+
+Contribute button (gradient)
+
+Optional Admin Login
+
+Sticky positioning recommended.
+
+🔹 Sidebar (Desktop)
+
+Semester list (1–10)
+
+Subjects
+
+Announcements
+
+Popular Resources
+
+On mobile:
+
+Convert sidebar into slide-out drawer.
+
+🔹 Main Content Area
+
+Responsive grid layout
+
+Card-based UI
+
+Pagination or infinite scroll
+
+Smooth fade-in transitions
+
+🎯 CORE FEATURES (DETAILED)
+1️⃣ Semester-wise Navigation
+
+Hierarchy:
+
+Semester
+   → PYQs
+   → Notes
+   → Books
+
+
+Drill-down:
+
+PYQs → Subject → Year → Mid / End
+
+
+Use breadcrumb navigation:
+
+Home > Sem 1 > PYQs > DSA > 2025 Mid
+
+
+Fetch dynamically:
+
+fetch(`${API_URL}/api/resources?semester=1&type=pyq`)
+
+2️⃣ Subject-wise Page
+
+Route:
+
+/subject/dsa
+
+
+Display in tab layout:
+
+Tab 1 → PYQs
+
+Tab 2 → Notes
+
+Tab 3 → Books
+
+Add animated underline transition for active tab.
+
+3️⃣ Global Search & Filter System
+
+Located in navbar.
+
+Features:
+
+Real-time search
+
+Dropdown filter panel
+
+Active filter chips
+
+Clear All Filters button
+
+Result count display
+
+Filters:
+
+Semester
+
+Subject
+
+Year
+
+Mid / End
+
+Type
+
+Example:
+
+fetch(`${API_URL}/api/resources?semester=1&type=pyq&year=2025`)
+
+✅ ADVANCED UI IMPLEMENTATIONS
+1️⃣ Responsive Grid Layout
+Goal:
+
+4 cards → Desktop
+
+2 cards → Tablet
+
+1 card → Mobile
+
+Tailwind Grid Setup
+<div className="grid gap-6 
+                grid-cols-1 
+                sm:grid-cols-2 
+                lg:grid-cols-4">
+  {resources.map(resource => (
+    <ResourceCard key={resource._id} resource={resource} />
+  ))}
+</div>
+
+Breakpoints:
+
+grid-cols-1 → Mobile
+
+sm:grid-cols-2 → Tablet
+
+lg:grid-cols-4 → Desktop
+
+UI Enhancement Tips:
+
+min-h-[260px] for consistent height
+
+hover:scale-[1.02] transition-all duration-300
+
+rounded-2xl shadow-md
+
+Light border in dark mode
+
+2️⃣ Skeleton Loading (Animated)
+
+Show skeleton while fetching data.
+
+SkeletonCard Component
+function SkeletonCard() {
+  return (
+    <div className="animate-pulse p-4 rounded-2xl shadow-md bg-gray-200 dark:bg-gray-800">
+      <div className="h-40 bg-gray-300 dark:bg-gray-700 rounded-lg mb-4"></div>
+      <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+      <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+    </div>
+  );
+}
+
+Usage
+{loading ? (
+  <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    {[...Array(8)].map((_, i) => (
+      <SkeletonCard key={i} />
+    ))}
+  </div>
+) : (
+  <ResourceGrid />
+)}
+
+Best Practices:
+
+Match skeleton count with grid layout
+
+Use soft grays in light mode
+
+Use darker shades in dark mode
+
+Never show blank screen while loading
+
+3️⃣ Empty State Design
+
+When no resources found:
+
+Component
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center animate-fadeIn">
+      <div className="text-6xl mb-4">📂</div>
+      <h2 className="text-xl font-semibold mb-2">
+        No resources found
+      </h2>
+      <p className="text-gray-500 dark:text-gray-400">
+        Try adjusting your filters or search keyword.
+      </p>
+    </div>
+  );
+}
+
+Usage
+{resources.length === 0 && !loading && <EmptyState />}
+
+
+Enhancements:
+
+Add “Clear Filters” button
+
+Keep large vertical spacing (py-20)
+
+Use subtle fade-in animation
+
+4️⃣ Sticky Search Bar
+
+Keep search visible while scrolling.
+
+Implementation
+<div className="sticky top-0 z-40 
+                bg-white dark:bg-gray-900 
+                backdrop-blur-md 
+                border-b 
+                border-gray-200 dark:border-gray-700 
+                shadow-sm">
+  <SearchBar />
+</div>
+
+Why It Works:
+
+sticky top-0 → sticks to top
+
+z-40 → prevents overlap
+
+backdrop-blur-md → modern glass effect
+
+shadow-sm → premium appearance
+
+UX Improvements:
+
+Expand search input on focus
+
+Debounce search input (300ms)
+
+Show filter chips below search
+
+Keep filter dropdown attached
+
+4️⃣ Resource Detail Page
+
+Route:
+
+/resource/:id
+
+
+Layout:
+
+Left:
+
+PDF preview (responsive iframe)
+
+Right:
+
+Title
+
+Semester
+
+Subject
+
+Year
+
+Type
+
+Download count
+
+Average rating
+
+Download button
+
+Download:
+
+fetch(`${API_URL}/api/download/${id}`, { method: "POST" })
+
+
+Add:
+
+Sticky download panel (desktop)
+
+Badge indicators
+
+Hover animation
+
+5️⃣ Review & Comment Section
+
+Include:
+
+Star rating input
+
+Comment textarea
+
+Sort (Newest / Highest Rated)
+
+Average rating display
+
+POST:
+
+fetch(`${API_URL}/api/comments`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ resourceId, rating, comment })
+})
+
+6️⃣ Announcement Section
+
+Homepage top:
+
+Highlight banner
+
+Expandable cards
+
+Important badge
+
+Fetch:
+
+fetch(`${API_URL}/api/announcements`)
+
+
+Optional:
+
+Sticky alert bar
+
+7️⃣ Contribute Button
+
+Prominent gradient CTA button.
+
+Redirect to Google Form.
+
+Add upload icon.
+
+8️⃣ Admin Authentication (Frontend)
+
+Login:
+
+fetch(`${API_URL}/api/admin/login`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, password })
+})
+
+
+Store token in:
+
+httpOnly cookie (preferred)
+OR
+
+localStorage
+
+Attach token:
+
+Authorization: `Bearer ${token}`
+
+🔥 Professional UI Polish
+Card Design
+
+rounded-2xl
+
+soft shadow
+
+subtle border
+
+Spacing
+
+px-6 py-8
+
+consistent vertical rhythm
+
+Animations
+
+transition-all duration-300
+
+subtle hover scale
+
+fade-in on page load
+
+Performance
+
+Lazy load routes
+
+Memoize card components
+
+Avoid unnecessary re-renders
+
+Debounce search
+
+Accessibility
+
+Proper contrast
+
+Focus states
+
+Keyboard navigation support
+
+📂 Suggested Folder Structure
+src/
+ ├── components/
+ ├── pages/
+ ├── context/
+ ├── utils/
+ └── App.jsx
+
+
+This is now a production-level frontend specification suitable for building a professional academic resource platform.
